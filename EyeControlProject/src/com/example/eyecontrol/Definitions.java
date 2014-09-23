@@ -53,7 +53,7 @@ public class Definitions {
 		
 		seq_map.put("1UU", new Action ("hebrew menu", "תפריט עברית", Action.Type.MODE, '2'));
 		seq_map.put("1UL", new Action ("english menu", "תפריט אנגלית", Action.Type.MODE, '3'));
-		seq_map.put("1UR", new Action ("signs mode", "תפריט סימנים", Action.Type.MODE, '4'));
+		seq_map.put("1UR", new Action ("signs menu", "תפריט סימנים", Action.Type.MODE, '4'));
 		seq_map.put("1UD", new Action ("", "", Action.Type.ALARM));
 		seq_map.put("1UB", new Action ("", "", Action.Type.READ));
 		seq_map.put("1LU", new Action ("", "", Action.Type.SPEAK, '0'));
@@ -99,7 +99,7 @@ public class Definitions {
 		seq_map.put("2DB", new Action ("ע", "ע", Action.Type.CHARACTER, 'ע'));
 		seq_map.put("2BU", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
 		seq_map.put("2BL", new Action ("space", "רווח", Action.Type.CHARACTER, ' '));
-		seq_map.put("2BR", new Action ("backspace", "מחק", Action.Type.ERASE));
+		seq_map.put("2BR", new Action ("back space", "מחק", Action.Type.ERASE));
 		seq_map.put("2BD", new Action ("ת", "ת", Action.Type.CHARACTER, 'ת'));
 		seq_map.put("2BB", new Action ("ש", "ש", Action.Type.CHARACTER, 'ש'));
 		
@@ -129,16 +129,16 @@ public class Definitions {
 		seq_map.put("3BD", new Action ("k", "k", Action.Type.CHARACTER, 'k'));
 		seq_map.put("3BB", new Action ("y", "y", Action.Type.CHARACTER, 'y'));
 		
-		seq_map.put("4UU", new Action ("0", "0", Action.Type.CHARACTER, '0'));
-		seq_map.put("4UL", new Action ("1", "1", Action.Type.CHARACTER, '1'));
-		seq_map.put("4UR", new Action ("2", "2", Action.Type.CHARACTER, '2'));
-		seq_map.put("4UD", new Action ("3", "3", Action.Type.CHARACTER, '3'));
-		seq_map.put("4UB", new Action ("4", "4", Action.Type.CHARACTER, '4'));
-		seq_map.put("4LU", new Action ("5", "5", Action.Type.CHARACTER, '5'));
-		seq_map.put("4LL", new Action ("6", "6", Action.Type.CHARACTER, '6'));
-		seq_map.put("4LR", new Action ("7", "7", Action.Type.CHARACTER, '7'));
-		seq_map.put("4LD", new Action ("8", "8", Action.Type.CHARACTER, '8'));
-		seq_map.put("4LB", new Action ("9", "9", Action.Type.CHARACTER, '9'));
+		seq_map.put("4UU", new Action ("zero", "0", Action.Type.CHARACTER, '0'));
+		seq_map.put("4UL", new Action ("one", "1", Action.Type.CHARACTER, '1'));
+		seq_map.put("4UR", new Action ("two", "2", Action.Type.CHARACTER, '2'));
+		seq_map.put("4UD", new Action ("three", "3", Action.Type.CHARACTER, '3'));
+		seq_map.put("4UB", new Action ("four", "4", Action.Type.CHARACTER, '4'));
+		seq_map.put("4LU", new Action ("five", "5", Action.Type.CHARACTER, '5'));
+		seq_map.put("4LL", new Action ("six", "6", Action.Type.CHARACTER, '6'));
+		seq_map.put("4LR", new Action ("seven", "7", Action.Type.CHARACTER, '7'));
+		seq_map.put("4LD", new Action ("eight", "8", Action.Type.CHARACTER, '8'));
+		seq_map.put("4LB", new Action ("nine", "9", Action.Type.CHARACTER, '9'));
 		seq_map.put("4RU", new Action ("j", "j", Action.Type.CHARACTER, 'j'));
 		seq_map.put("4RL", new Action ("q", "q", Action.Type.CHARACTER, 'q'));
 		seq_map.put("4RR", new Action ("x", "x", Action.Type.CHARACTER, 'x'));
