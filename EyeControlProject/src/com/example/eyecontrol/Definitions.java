@@ -69,7 +69,7 @@ public class Definitions {
 		//seq_map.put("1DU", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1DL", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1DR", new Action ("", "", Action.Type.READ));
-		seq_map.put("1DD", new Action ("Nimrod is awsome", "Nimrod is awsome", Action.Type.READ));
+		//seq_map.put("1DD", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1DB", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1BU", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1BL", new Action ("", "", Action.Type.READ));
