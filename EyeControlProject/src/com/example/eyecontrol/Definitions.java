@@ -48,8 +48,8 @@ public class Definitions {
 		
 		// gesture translation
 		
-		seq_map.put("0UD", new Action ("", "", Action.Type.ALARM));
-		seq_map.put("0BB", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
+		seq_map.put("0BB", new Action ("", "", Action.Type.ALARM));
+		seq_map.put("0UD", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
 		
 		seq_map.put("1UU", new Action ("hebrew menu", "תפריט עברית", Action.Type.MODE, '2'));
 		seq_map.put("1UL", new Action ("english menu", "תפריט אנגלית", Action.Type.MODE, '3'));

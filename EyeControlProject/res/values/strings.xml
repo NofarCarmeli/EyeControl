@@ -4,5 +4,6 @@
     <string name="app_name">Eye Control</string>
     <string name="entered_text"></string>
     <string name="action_settings">Settings</string>
-
+    <string name="alarm_button">Turn Alarm off</string>
+    
 </resources>

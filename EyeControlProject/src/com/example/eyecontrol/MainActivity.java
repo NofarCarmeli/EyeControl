@@ -14,8 +14,8 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 
 public class MainActivity extends Activity implements OnInitListener{ 
@@ -134,11 +134,14 @@ public class MainActivity extends Activity implements OnInitListener{
     }
     
     public void toggleAlarm() {
+    	Button but = (Button) findViewById(R.id.alarmToggleButton);
     	if (alarm_player.isPlaying()) {
 			alarm_player.stop();
 			alarm_player.prepareAsync();
+			but.setVisibility(View.GONE);
 		} else {
 			alarm_player.start();
+			but.setVisibility(View.VISIBLE);
 		}
     }
     
@@ -170,8 +173,6 @@ public class MainActivity extends Activity implements OnInitListener{
         	displayMode(a.character);
     		break;
     	case ALARM:
-    		ToggleButton but = (ToggleButton) findViewById(R.id.alarmToggleButton);
-    		but.toggle();
     		toggleAlarm();
     		break;
     	case SPEAK:
