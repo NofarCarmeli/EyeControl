@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +32,7 @@ public class MainActivity extends Activity implements OnInitListener{
     private static Definitions def;
     private static TextView mode_view;
     private static MediaPlayer alarm_player;
+    private static AudioManager audio_manager;
     // mode variables
 	private boolean verbose = true;
     private char lang;
@@ -54,6 +56,8 @@ public class MainActivity extends Activity implements OnInitListener{
         text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
         alarm_player = MediaPlayer.create(getBaseContext(), R.raw.alarm);
     	alarm_player.setLooping(true);
+    	audio_manager = (AudioManager)getSystemService(AUDIO_SERVICE);
+    	audio_manager.setMode(AudioManager.MODE_IN_CALL);
     	// state initialization
     	lang = def.first_language;
         displayMode(def.first_menu);
@@ -140,6 +144,7 @@ public class MainActivity extends Activity implements OnInitListener{
 			alarm_player.prepareAsync();
 			but.setVisibility(View.GONE);
 		} else {
+			audio_manager.setSpeakerphoneOn(true);
 			alarm_player.start();
 			but.setVisibility(View.VISIBLE);
 		}
@@ -153,6 +158,7 @@ public class MainActivity extends Activity implements OnInitListener{
     		return;
     	}
     	if (verbose) {
+    		audio_manager.setSpeakerphoneOn(false);
     		if (lang=='e' && !a.eng_desc.equals("")) {
     			speakWords(a.eng_desc);
     		} else if (lang=='h' && !a.heb_desc.equals("")) {
@@ -180,6 +186,7 @@ public class MainActivity extends Activity implements OnInitListener{
     	case SPEAK:
     		int res_id = getResources().getIdentifier(String.valueOf(lang)+a.character,"raw",getPackageName());
     		final MediaPlayer mediaPlayer = MediaPlayer.create(getBaseContext(), res_id);
+    		audio_manager.setSpeakerphoneOn(true);
     		mediaPlayer.start();
     		Handler sHandler = new Handler();
     		sHandler.postDelayed(new Runnable() {
@@ -202,6 +209,7 @@ public class MainActivity extends Activity implements OnInitListener{
     		if (to_read.equals("")) {
     			to_read = def.no_text;
     		}
+    		audio_manager.setSpeakerphoneOn(true);
     		speakWords(to_read);
     		break;
     	case CLEAR:
