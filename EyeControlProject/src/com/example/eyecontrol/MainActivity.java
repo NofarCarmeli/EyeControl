@@ -171,6 +171,8 @@ public class MainActivity extends Activity implements OnInitListener{
     		break;
     	case MODE:
         	displayMode(a.character);
+        	//int board_res_id = getResources().getIdentifier("menu"+a.character,"drawable",getPackageName());
+        	//findViewById(R.id.boardImageView).setBackgroundResource(board_res_id);	
     		break;
     	case ALARM:
     		toggleAlarm();

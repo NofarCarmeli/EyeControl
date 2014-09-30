@@ -252,6 +252,7 @@ int id activity_chooser_view_content 0x7f060025
 int id alarmToggleButton 0x7f06003f
 int id always 0x7f06000b
 int id beginning 0x7f060011
+int id boardImageView 0x7f060040
 int id checkbox 0x7f06002d
 int id collapseActionView 0x7f06000d
 int id cumulated_text 0x7f06003d
@@ -269,7 +270,6 @@ int id homeAsUp 0x7f060005
 int id icon 0x7f06002a
 int id ifRoom 0x7f06000a
 int id image 0x7f060027
-int id imageView1 0x7f060040
 int id listMode 0x7f060001
 int id list_item 0x7f060029
 int id middle 0x7f060012

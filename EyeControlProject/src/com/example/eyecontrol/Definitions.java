@@ -49,23 +49,23 @@ public class Definitions {
 		// gesture translation
 		
 		seq_map.put("0BB", new Action ("", "", Action.Type.ALARM));
-		seq_map.put("0UD", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
+		seq_map.put("0BD", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
 		
 		seq_map.put("1UU", new Action ("hebrew menu", "תפריט עברית", Action.Type.MODE, '2'));
 		seq_map.put("1UL", new Action ("english menu", "תפריט אנגלית", Action.Type.MODE, '3'));
 		seq_map.put("1UR", new Action ("signs menu", "תפריט סימנים", Action.Type.MODE, '4'));
-		seq_map.put("1UD", new Action ("", "", Action.Type.ALARM));
+		seq_map.put("1UD", new Action ("power off", "כיבוי", Action.Type.POWER));
 		seq_map.put("1UB", new Action ("", "", Action.Type.READ));
-		seq_map.put("1LU", new Action ("", "", Action.Type.SPEAK, '0'));
-		seq_map.put("1LL", new Action ("", "", Action.Type.SPEAK, '1'));
-		seq_map.put("1LR", new Action ("", "", Action.Type.SPEAK, '2'));
-		seq_map.put("1LD", new Action ("", "", Action.Type.SPEAK, '3'));
-		seq_map.put("1LB", new Action ("", "", Action.Type.SPEAK, '4'));
+		seq_map.put("1LU", new Action ("", "", Action.Type.SPEAK, '4'));
+		seq_map.put("1LL", new Action ("", "", Action.Type.SPEAK, '9'));
+		seq_map.put("1LR", new Action ("", "", Action.Type.SPEAK, '8'));
+		seq_map.put("1LD", new Action ("", "", Action.Type.SPEAK, '7'));
+		seq_map.put("1LB", new Action ("", "", Action.Type.SPEAK, '6'));
 		seq_map.put("1RU", new Action ("עברית", "english", Action.Type.LANGUAGE));
-		seq_map.put("1RL", new Action ("", "", Action.Type.SPEAK, '6'));
-		seq_map.put("1RR", new Action ("", "", Action.Type.SPEAK, '7'));
-		seq_map.put("1RD", new Action ("", "", Action.Type.SPEAK, '8'));
-		seq_map.put("1RB", new Action ("", "", Action.Type.SPEAK, '9'));
+		seq_map.put("1RL", new Action ("", "", Action.Type.SPEAK, '0'));
+		seq_map.put("1RR", new Action ("", "", Action.Type.SPEAK, '1'));
+		seq_map.put("1RD", new Action ("", "", Action.Type.SPEAK, '2'));
+		seq_map.put("1RB", new Action ("", "", Action.Type.SPEAK, '3'));
 		//seq_map.put("1DU", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1DL", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1DR", new Action ("", "", Action.Type.READ));
@@ -74,8 +74,8 @@ public class Definitions {
 		//seq_map.put("1BU", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1BL", new Action ("", "", Action.Type.READ));
 		seq_map.put("1BR", new Action ("clear", "מחיקה", Action.Type.CLEAR));
-		seq_map.put("1BD", new Action ("power off", "כיבוי", Action.Type.POWER));
-		seq_map.put("1BB", new Action ("rest mode", "מצב מנוחה", Action.Type.MODE, '0'));
+		seq_map.put("1BD", new Action ("rest mode", "מצב מנוחה", Action.Type.MODE, '0'));
+		seq_map.put("1BB", new Action ("", "", Action.Type.ALARM));
 		
 		seq_map.put("2UU", new Action ("ה", "ה", Action.Type.CHARACTER, 'ה'));
 		seq_map.put("2UL", new Action ("ד", "ד", Action.Type.CHARACTER, 'ד'));
@@ -97,11 +97,11 @@ public class Definitions {
 		seq_map.put("2DR", new Action ("צ", "צ", Action.Type.CHARACTER, 'צ'));
 		seq_map.put("2DD", new Action ("פ", "פ", Action.Type.CHARACTER, 'פ'));
 		seq_map.put("2DB", new Action ("ע", "ע", Action.Type.CHARACTER, 'ע'));
-		seq_map.put("2BU", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
-		seq_map.put("2BL", new Action ("space", "רווח", Action.Type.CHARACTER, ' '));
+		seq_map.put("2BU", new Action ("ת", "ת", Action.Type.CHARACTER, 'ת'));
+		seq_map.put("2BL", new Action ("ש", "ש", Action.Type.CHARACTER, 'ש'));
 		seq_map.put("2BR", new Action ("back space", "מחק", Action.Type.ERASE));
-		seq_map.put("2BD", new Action ("ת", "ת", Action.Type.CHARACTER, 'ת'));
-		seq_map.put("2BB", new Action ("ש", "ש", Action.Type.CHARACTER, 'ש'));
+		seq_map.put("2BD", new Action ("space", "רווח", Action.Type.CHARACTER, ' '));
+		seq_map.put("2BB", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
 		
 		seq_map.put("3UU", new Action ("a", "a", Action.Type.CHARACTER, 'a'));
 		seq_map.put("3UL", new Action ("b", "b", Action.Type.CHARACTER, 'b'));
@@ -123,11 +123,11 @@ public class Definitions {
 		seq_map.put("3DR", new Action ("u", "u", Action.Type.CHARACTER, 'u'));
 		seq_map.put("3DD", new Action ("v", "v", Action.Type.CHARACTER, 'v'));
 		seq_map.put("3DB", new Action ("w", "w", Action.Type.CHARACTER, 'w'));
-		seq_map.put("3BU", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
-		seq_map.put("3BL", new Action ("space", "רווח", Action.Type.CHARACTER, ' '));
-		seq_map.put("3BR", new Action ("beckspace", "מחק", Action.Type.ERASE));
-		seq_map.put("3BD", new Action ("k", "k", Action.Type.CHARACTER, 'k'));
-		seq_map.put("3BB", new Action ("y", "y", Action.Type.CHARACTER, 'y'));
+		seq_map.put("3BU", new Action ("k", "k", Action.Type.CHARACTER, 'k'));
+		seq_map.put("3BL", new Action ("y", "y", Action.Type.CHARACTER, 'y'));
+		seq_map.put("3BR", new Action ("back space", "מחק", Action.Type.ERASE));
+		seq_map.put("3BD", new Action ("space", "רווח", Action.Type.CHARACTER, ' '));
+		seq_map.put("3BB", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
 		
 		seq_map.put("4UU", new Action ("zero", "0", Action.Type.CHARACTER, '0'));
 		seq_map.put("4UL", new Action ("one", "1", Action.Type.CHARACTER, '1'));
@@ -149,11 +149,11 @@ public class Definitions {
 		seq_map.put("4DR", new Action ("question mark", "סימן שאלה", Action.Type.CHARACTER, '?'));
 		seq_map.put("4DD", new Action ("exclamation mark", "סימן קריאה", Action.Type.CHARACTER, '!'));
 		//seq_map.put("4DB", new Action ("", "", Action.Type.READ));
-		seq_map.put("4BU", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
-		seq_map.put("4BL", new Action ("space", "רווח", Action.Type.CHARACTER, ' '));
-		seq_map.put("4BR", new Action ("backspace", "מחק", Action.Type.ERASE));
-		seq_map.put("4BD", new Action ("power off", "כיבוי", Action.Type.POWER));
-		//seq_map.put("4BB", new Action ("", "", Action.Type.READ));
+		//seq_map.put("4BU", new Action ("", "", Action.Type.READ));
+		seq_map.put("4BL", new Action ("power off", "כיבוי", Action.Type.POWER));
+		seq_map.put("4BR", new Action ("back space", "מחק", Action.Type.ERASE));
+		seq_map.put("4BD", new Action ("space", "רווח", Action.Type.CHARACTER, ' '));
+		seq_map.put("4BB", new Action ("main menu", "תפריט ראשי", Action.Type.MODE, '1'));
     	
 	}
 
