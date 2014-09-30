@@ -46,8 +46,8 @@ public class GestureTranslator {
 		Action a = def.seq_map.get(gestures);
 		if (a!=null) {
 			if (a.action==Action.Type.MODE) {
-	    		mode = a.character;
-	    	}
+				mode = a.character;
+			}
 			clearGestures(); // should be after changing mode
 		} else if (gestures.contains(def.alarm_seq)) {
 			a = new Action ("", "", Action.Type.ALARM);
