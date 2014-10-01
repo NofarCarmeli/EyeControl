@@ -16,6 +16,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -177,8 +178,9 @@ public class MainActivity extends Activity implements OnInitListener{
 			break;
 		case MODE:
 			displayMode(a.character);
-			//int board_res_id = getResources().getIdentifier("menu"+a.character,"drawable",getPackageName());
-			//findViewById(R.id.boardImageView).setBackgroundResource(board_res_id);	
+			int board_res_id = getResources().getIdentifier("menu"+a.character,"drawable",getPackageName());
+			ImageView board_image = (ImageView) findViewById(R.id.boardImageView);
+			board_image.setImageResource(board_res_id);	
 			break;
 		case ALARM:
 			toggleAlarm();
