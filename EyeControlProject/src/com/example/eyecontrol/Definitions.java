@@ -12,7 +12,7 @@ import java.util.HashMap;
  * to:
  * 1 - A string describing the action (will be read in the headphone)
  * 2 - The type of action (starting with 'Action.Type.' and then one of:
- *     POWER, MODE, ALARM, SPEAK, LANGUAGE, CHARACTER, ERASE, READ, CLEAR
+ *     POWER, MODE, ALARM, SPEAK, LANGUAGE, DISPLAY, CHARACTER, ERASE, READ, CLEAR
  * 3 - The CHARACTER action should be followed be the character
  *     The MODE action should be followed be the new mode number
  *     Other actions should not provide a third argument
@@ -71,7 +71,7 @@ public class Definitions {
 		//seq_map.put("1DR", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1DD", new Action ("", "", Action.Type.READ));
 		//seq_map.put("1DB", new Action ("", "", Action.Type.READ));
-		//seq_map.put("1BU", new Action ("", "", Action.Type.READ));
+		seq_map.put("1BU", new Action ("change display", "שינוי תצוגה", Action.Type.DISPLAY));
 		//seq_map.put("1BL", new Action ("", "", Action.Type.READ));
 		seq_map.put("1BR", new Action ("clear", "מחיקה", Action.Type.CLEAR));
 		seq_map.put("1BD", new Action ("rest mode", "מצב מנוחה", Action.Type.MODE, '0'));

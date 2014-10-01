@@ -3,7 +3,7 @@ package com.example.eyecontrol;
 public class Action {
 
 	public enum Type {
-		POWER, MODE, ALARM, SPEAK, LANGUAGE, CHARACTER, ERASE, READ, CLEAR
+		POWER, MODE, ALARM, SPEAK, LANGUAGE, DISPLAY, CHARACTER, ERASE, READ, CLEAR
 	}
 	
 	public Type action;

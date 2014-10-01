@@ -22,7 +22,6 @@
         android:text="@string/entered_text"
         android:textAppearance="?android:attr/textAppearanceLarge"
 	    android:singleLine="false"
-	    android:maxLines="3"
 	    android:scrollbars="vertical"
 	    android:gravity="bottom"
     />

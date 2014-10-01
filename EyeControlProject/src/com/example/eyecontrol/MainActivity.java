@@ -217,6 +217,16 @@ public class MainActivity extends Activity implements OnInitListener{
 		case CLEAR:
 			text_editor.clear();
 			break;
+		case DISPLAY:
+			ImageView board_view = (ImageView) findViewById(R.id.boardImageView);
+			if (board_view.getVisibility() == View.VISIBLE) {
+				board_view.setVisibility(View.GONE);
+			} else {
+				board_view.setVisibility(View.VISIBLE);
+			}
+			break;
+		default:
+			break;
 		}
 	}
  
