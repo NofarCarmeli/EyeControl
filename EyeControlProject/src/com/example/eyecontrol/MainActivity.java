@@ -32,6 +32,7 @@ public class MainActivity extends Activity implements OnInitListener{
 	private static GestureTranslator translator;
 	private static Definitions def;
 	private static TextView mode_view;
+	private static ImageView board_view;
 	private static MediaPlayer alarm_player;
 	private static AudioManager audio_manager;
 	// mode variables
@@ -52,6 +53,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());
 		mode_view = ((TextView)findViewById (R.id.mode_name));
 		TextView debug_view = ((TextView)findViewById (R.id.debug_string));
+		board_view = (ImageView) findViewById(R.id.boardImageView);
 		def = new Definitions();
 		translator = new GestureTranslator(def, debug_view);
 		text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
@@ -61,7 +63,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		audio_manager.setMode(AudioManager.MODE_IN_CALL);
 		// state initialization
 		lang = def.first_language;
-		displayMode(def.first_menu);
+		changeModeDisplay(def.first_menu);
 	}
 	
 	// text to speech methods:
@@ -88,7 +90,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		myTTS.speak(speech, TextToSpeech.QUEUE_ADD, null);
 	}
 	
-	// gesture identification:
+	// gesture identification: (will be replaced with bluetooth receiver)
 	
 	@Override 
 	public boolean onTouchEvent(MotionEvent event){ 
@@ -128,17 +130,13 @@ public class MainActivity extends Activity implements OnInitListener{
 		
 	}
     
-	// more functionality:
+	// action helpers:
     
 	public void onToggleClicked(View view) {
 		toggleAlarm();
 	}
-	
-	private void displayMode(char mode) {
-		mode_view.setText(def.menu_map.get(mode)+" mode:");
-	}
     
-	public void toggleAlarm() {
+	private void toggleAlarm() {
 		Button but = (Button) findViewById(R.id.alarmToggleButton);
 		if (alarm_player.isPlaying()) {
 			alarm_player.stop();
@@ -150,6 +148,61 @@ public class MainActivity extends Activity implements OnInitListener{
 			but.setVisibility(View.VISIBLE);
 		}
 	}
+	
+	private void speakRecordedSentence(char sentence_id) {
+		int res_id = getResources().getIdentifier(String.valueOf(lang)+sentence_id,"raw",getPackageName());
+		final MediaPlayer mediaPlayer = MediaPlayer.create(getBaseContext(), res_id);
+		audio_manager.setSpeakerphoneOn(true);
+		mediaPlayer.start();
+		Handler sHandler = new Handler();
+		sHandler.postDelayed(new Runnable() {
+			public void run() {
+				mediaPlayer.release();
+			}
+		}, 1000);
+	}
+	
+	private void changeModeDisplay(char mode) {
+		mode_view.setText(def.menu_map.get(mode)+" mode:");
+		int board_res_id = getResources().getIdentifier("menu"+mode,"drawable",getPackageName());
+		board_view.setImageResource(board_res_id);
+	}
+	
+	private void toggleBoardDisplay() {
+		if (board_view.getVisibility() == View.VISIBLE) {
+			board_view.setVisibility(View.GONE);
+		} else {
+			board_view.setVisibility(View.VISIBLE);
+		}
+	}
+	
+	private void readTextFromEditor() {
+		String to_read = text_editor.getText();
+		if (to_read.equals("")) {
+			to_read = def.no_text;
+		}
+		audio_manager.setSpeakerphoneOn(true);
+		speakWords(to_read);
+	}
+	
+	private void readActionDescription(Action a){
+		audio_manager.setSpeakerphoneOn(false);
+		if (lang=='e' && !a.eng_desc.equals("")) {
+			speakWords(a.eng_desc);
+		} else if (lang=='h' && !a.heb_desc.equals("")) {
+			speakWords(a.heb_desc);
+		}
+	}
+	
+	private void powerOff() {
+		Handler pHandler = new Handler();
+		pHandler.postDelayed(new Runnable() {
+			public void run() {
+				finish();
+			}
+		}, 1000);
+	}
+
     
 	// handling gestures:
     
@@ -159,46 +212,24 @@ public class MainActivity extends Activity implements OnInitListener{
 			return;
 		}
 		if (verbose) {
-			audio_manager.setSpeakerphoneOn(false);
-			if (lang=='e' && !a.eng_desc.equals("")) {
-				speakWords(a.eng_desc);
-			} else if (lang=='h' && !a.heb_desc.equals("")) {
-				speakWords(a.heb_desc);
-			}
+			readActionDescription(a);
 		}
 		
 		switch (a.action) {
 		case POWER:
-			Handler pHandler = new Handler();
-			pHandler.postDelayed(new Runnable() {
-				public void run() {
-					finish();
-				}
-			}, 1000);
+			powerOff();
 			break;
 		case MODE:
-			displayMode(a.character);
-			int board_res_id = getResources().getIdentifier("menu"+a.character,"drawable",getPackageName());
-			ImageView board_image = (ImageView) findViewById(R.id.boardImageView);
-			board_image.setImageResource(board_res_id);	
+			changeModeDisplay(a.character);	
 			break;
 		case ALARM:
 			toggleAlarm();
 			break;
 		case SPEAK:
-			int res_id = getResources().getIdentifier(String.valueOf(lang)+a.character,"raw",getPackageName());
-			final MediaPlayer mediaPlayer = MediaPlayer.create(getBaseContext(), res_id);
-			audio_manager.setSpeakerphoneOn(true);
-			mediaPlayer.start();
-			Handler sHandler = new Handler();
-			sHandler.postDelayed(new Runnable() {
-				public void run() {
-					mediaPlayer.release();
-				}
-			}, 1000);
+			speakRecordedSentence(a.character);
 			break;
 		case LANGUAGE:
-			lang = lang=='e'? 'h' : 'e';
+			lang = (lang=='e')? 'h' : 'e';
 			break;
 		case CHARACTER:
 			text_editor.addLetter(a.character);
@@ -207,23 +238,13 @@ public class MainActivity extends Activity implements OnInitListener{
 			text_editor.deleteLetter();
 			break;
 		case READ:
-			String to_read = text_editor.getText();
-			if (to_read.equals("")) {
-				to_read = def.no_text;
-			}
-			audio_manager.setSpeakerphoneOn(true);
-			speakWords(to_read);
+			readTextFromEditor();
 			break;
 		case CLEAR:
 			text_editor.clear();
 			break;
 		case DISPLAY:
-			ImageView board_view = (ImageView) findViewById(R.id.boardImageView);
-			if (board_view.getVisibility() == View.VISIBLE) {
-				board_view.setVisibility(View.GONE);
-			} else {
-				board_view.setVisibility(View.VISIBLE);
-			}
+			toggleBoardDisplay();
 			break;
 		default:
 			break;
