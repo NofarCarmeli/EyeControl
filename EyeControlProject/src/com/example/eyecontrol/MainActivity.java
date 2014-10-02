@@ -88,6 +88,10 @@ public class MainActivity extends Activity implements OnInitListener{
 	        	Intent intent = new Intent(this, UserGuide.class);
 	        	startActivity(intent);
 	            return true;
+	        case R.id.heb_user_guide:
+	        	Intent heb_intent = new Intent(this, HebUserGuide.class);
+	        	startActivity(heb_intent);
+	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }

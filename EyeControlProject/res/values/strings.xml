@@ -5,8 +5,11 @@
     <string name="entered_text"></string>
     <string name="action_settings">Settings</string>
     <string name="user_guide">User Guide</string>
+    <string name="heb_user_guide">מדריך משתמש</string>
     <string name="alarm_button">Turn Alarm off</string>
+    <string name="title_activity_heb_user_guide">מדריך משתמש</string>
     <string name="title_activity_user_guide">User Guide</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="heb_guide">שלום עולם!</string>
+    <string name="eng_guide">Hello world!</string>
 
 </resources>
