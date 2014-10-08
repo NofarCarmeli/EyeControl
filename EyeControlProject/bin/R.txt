@@ -375,12 +375,12 @@ int string abc_shareactionprovider_share_with_application 0x7f0b000b
 int string action_settings 0x7f0b000f
 int string alarm_button 0x7f0b0012
 int string app_name 0x7f0b000d
-int string eng_guide 0x7f0b0014
+int string eng_guide 0x7f0b0016
 int string entered_text 0x7f0b000e
 int string heb_guide 0x7f0b0015
 int string heb_user_guide 0x7f0b0011
-int string title_activity_heb_user_guide 0x7f0b0016
-int string title_activity_user_guide 0x7f0b0013
+int string title_activity_heb_user_guide 0x7f0b0013
+int string title_activity_user_guide 0x7f0b0014
 int string user_guide 0x7f0b0010
 int style AppBaseTheme 0x7f0c008b
 int style AppTheme 0x7f0c008c
