@@ -31,5 +31,10 @@ class TextEditor {
 	public String getText() {
 		return text_view.getText().toString();
 	}
+	
+	public boolean isLastSpace() {
+		String text = text_view.getText().toString();
+		return text.length() > 0 && text.charAt(text.length()-1)==' ';
+	}
 
 }

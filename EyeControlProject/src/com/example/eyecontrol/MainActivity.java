@@ -257,6 +257,12 @@ public class MainActivity extends Activity implements OnInitListener{
 	}
 	
 	private void powerOff() {
+		// turn alarm off if it is working, and release the player
+		if (alarm_player.isPlaying()) {
+			alarm_player.stop();
+		}
+		alarm_player.release();
+		// turn off
 		Handler pHandler = new Handler();
 		pHandler.postDelayed(new Runnable() {
 			public void run() {
@@ -294,7 +300,11 @@ public class MainActivity extends Activity implements OnInitListener{
 			lang = (lang=='e')? 'h' : 'e';
 			break;
 		case CHARACTER:
-			text_editor.addLetter(a.character);
+			if (a.character == ' ' && text_editor.isLastSpace()) {
+				readTextFromEditor();
+			} else {
+				text_editor.addLetter(a.character);
+			}
 			break;
 		case ERASE:
 			text_editor.deleteLetter();
