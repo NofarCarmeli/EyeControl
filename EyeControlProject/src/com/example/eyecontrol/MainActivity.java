@@ -45,6 +45,7 @@ public class MainActivity extends Activity implements OnInitListener{
 	private static GestureTranslator translator;
 	private static Definitions def;
 	private static TextView mode_view;
+	private static TextView instructions_view;
 	private static ImageView board_view;
 	private static MediaPlayer alarm_player;
 	private static AudioManager audio_manager;
@@ -77,18 +78,20 @@ public class MainActivity extends Activity implements OnInitListener{
 		// more static initializations
 		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());
 		mode_view = ((TextView)findViewById (R.id.mode_name));
-		TextView debug_view = ((TextView)findViewById (R.id.debug_string));
+		TextView last_gesture_view = ((TextView)findViewById (R.id.last_gesture));
 		board_view = (ImageView) findViewById(R.id.boardImageView);
 		def = new Definitions();
-		translator = new GestureTranslator(def, debug_view);
+		translator = new GestureTranslator(def, last_gesture_view);
 		text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
 		alarm_player = MediaPlayer.create(getBaseContext(), R.raw.alarm);
 		alarm_player.setLooping(true);
 		audio_manager = (AudioManager)getSystemService(AUDIO_SERVICE);
 		audio_manager.setMode(AudioManager.MODE_IN_CALL);
+		instructions_view = ((TextView)findViewById (R.id.boardDisplayInstructions));
 		// state initialization
 		lang = def.first_language;
 		changeModeDisplay(def.first_menu);
+		instructions_view.setVisibility(View.GONE);
 	}
 	
 	// to show menu:
@@ -228,12 +231,15 @@ public class MainActivity extends Activity implements OnInitListener{
 		mode_view.setText(def.menu_map.get(mode)+" mode:");
 		int board_res_id = getResources().getIdentifier("menu"+mode,"drawable",getPackageName());
 		board_view.setImageResource(board_res_id);
+		instructions_view.setText(def.instructions.get(mode));
 	}
 	
 	private void toggleBoardDisplay() {
 		if (board_view.getVisibility() == View.VISIBLE) {
 			board_view.setVisibility(View.GONE);
+			instructions_view.setVisibility(View.VISIBLE);
 		} else {
+			instructions_view.setVisibility(View.GONE);
 			board_view.setVisibility(View.VISIBLE);
 		}
 	}

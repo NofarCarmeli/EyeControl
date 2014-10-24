@@ -33,12 +33,14 @@ public class Definitions {
 	
 	public Map <String, Action> seq_map;
 	public Map <Character, String> menu_map;
+	public Map <Character, String> instructions;
 	
 	Definitions() {
 		
 		seq_map = new HashMap<String, Action>(75);
-		menu_map = new HashMap<Character, String>(3);
-		
+		menu_map = new HashMap<Character, String>(5);
+		instructions = new HashMap<Character, String>(5);
+
 		// menu names
 		
 		menu_map.put('0', "Rest");
@@ -46,6 +48,14 @@ public class Definitions {
 		menu_map.put('2', "Hebrew");
 		menu_map.put('3', "English");
 		menu_map.put('4', "Signs");
+		
+		// instructions for display
+		
+		instructions.put('0', "Blink and look down for main menu");
+		instructions.put('1', "Blink and look up to show board");
+		instructions.put('2', "Blink twice for main menu");
+		instructions.put('3', "Blink twice for main menu");
+		instructions.put('4', "Blink twice for main menu");
 		
 		// gesture translation
 		

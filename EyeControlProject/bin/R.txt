@@ -255,11 +255,11 @@ int id activity_chooser_view_content 0x7f060025
 int id alarmToggleButton 0x7f06003f
 int id always 0x7f06000b
 int id beginning 0x7f060011
+int id boardDisplayInstructions 0x7f060041
 int id boardImageView 0x7f060040
 int id checkbox 0x7f06002d
 int id collapseActionView 0x7f06000d
 int id cumulated_text 0x7f06003d
-int id debug_string 0x7f06003e
 int id default_activity_button 0x7f060028
 int id dialog 0x7f06000e
 int id disableHome 0x7f060008
@@ -268,12 +268,13 @@ int id edit_query 0x7f060030
 int id end 0x7f060013
 int id expand_activities_button 0x7f060026
 int id expanded_menu 0x7f06002c
-int id heb_user_guide 0x7f060042
+int id heb_user_guide 0x7f060043
 int id home 0x7f060014
 int id homeAsUp 0x7f060005
 int id icon 0x7f06002a
 int id ifRoom 0x7f06000a
 int id image 0x7f060027
+int id last_gesture 0x7f06003e
 int id listMode 0x7f060001
 int id list_item 0x7f060029
 int id middle 0x7f060012
@@ -305,7 +306,7 @@ int id title 0x7f06002b
 int id top_action_bar 0x7f060020
 int id up 0x7f060021
 int id useLogo 0x7f060003
-int id user_guide 0x7f060041
+int id user_guide 0x7f060042
 int id withText 0x7f06000c
 int integer abc_max_action_buttons 0x7f0a0000
 int layout abc_action_bar_decor 0x7f030000

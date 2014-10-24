@@ -5,7 +5,7 @@ import android.widget.TextView;
 
 public class GestureTranslator {    
 	
-	static private TextView debug_view;
+	static private TextView last_gesture;
 	static private Definitions def;
 	
 	private char mode;
@@ -13,7 +13,7 @@ public class GestureTranslator {
 	private long last_time;
 
 	GestureTranslator(Definitions d, TextView debug_v) {
-		debug_view = debug_v;
+		last_gesture = debug_v;
 		def = d;
 		mode = def.first_menu;
 		last_time = System.nanoTime();
@@ -22,13 +22,34 @@ public class GestureTranslator {
 	
 	private void clearGestures() {
 		gestures=String.valueOf(mode);
-		debug_view.setText(gestures); // view gestures for debug
 	}
 	
 	private void addToGestures(char c) {
 		gestures+=c;
-		debug_view.setText(gestures); // view gestures for debug
+		updateLastGestureDisplay(c);
 	} 
+	
+	private void updateLastGestureDisplay(char c) {
+		String text = "";
+		switch (c) {
+		case 'U':
+			text = "Up";
+			break;
+		case 'D':
+			text = "Down";
+			break;
+		case 'R':
+			text = "Right";
+			break;
+		case 'L':
+			text = "Left";
+			break;
+		case 'B':
+			text = "Blink";
+			break;
+		}
+		last_gesture.setText("Last gesture: "+text);
+	}
 
 	
 	public Action getGesture(char c) {
