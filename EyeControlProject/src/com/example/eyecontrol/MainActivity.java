@@ -1,8 +1,13 @@
 package com.example.eyecontrol;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
@@ -22,6 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity implements OnInitListener{ 
@@ -31,6 +37,9 @@ public class MainActivity extends Activity implements OnInitListener{
 	// to speak
 	private int MY_DATA_CHECK_CODE = 0;
 	private TextToSpeech myTTS;
+	// for bluetooth
+	private int REQUEST_ENABLE_BT = 1;
+	private BluetoothAdapter mBluetoothAdapter;
 	// objects with jobs
 	private static TextEditor text_editor;
 	private static GestureTranslator translator;
@@ -49,6 +58,18 @@ public class MainActivity extends Activity implements OnInitListener{
 		setContentView(R.layout.activity_main);
 		// to read gestures
 		mDetector = new GestureDetectorCompat(this, new MyGestureListener());
+		// activate bluetooth // TODO BT
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (mBluetoothAdapter == null) {
+		    // Device does not support Bluetooth
+			Toast.makeText(getApplicationContext(),"Device does not support Bluetooth" 
+			         ,Toast.LENGTH_LONG).show();
+			return;
+		}
+		if (!mBluetoothAdapter.isEnabled()) {
+		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+		    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+		}
 		// to speak
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -108,6 +129,16 @@ public class MainActivity extends Activity implements OnInitListener{
 				installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
 				startActivity(installTTSIntent);
 			}
+		} else if (requestCode == REQUEST_ENABLE_BT)  { //TODO BT
+			if (resultCode == RESULT_CANCELED) {
+				Toast.makeText(getApplicationContext(),"Bluetooth must be activated" 
+				         ,Toast.LENGTH_LONG).show();
+			} /*else {
+				BluetoothDevice mDevice; //TODO
+				ConnectThread mConnectThread = new ConnectThread(mDevice);
+				mConnectThread.start();
+
+			}*/
 		}
 	}
 	
@@ -281,5 +312,104 @@ public class MainActivity extends Activity implements OnInitListener{
 			break;
 		}
 	}
+	
+	//TODO BT
+	/*
+	private class ConnectThread extends Thread {
+	    private final BluetoothSocket mmSocket;
+	    private final BluetoothDevice mmDevice;
+	 
+	    public ConnectThread(BluetoothDevice device) {
+	        // Use a temporary object that is later assigned to mmSocket,
+	        // because mmSocket is final
+	        BluetoothSocket tmp = null;
+	        mmDevice = device;
+	 
+	        // Get a BluetoothSocket to connect with the given BluetoothDevice
+	        try {
+	            // MY_UUID is the app's UUID string, also used by the server code
+	            tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+	        } catch (IOException e) { }
+	        mmSocket = tmp;
+	    }
+	 
+	    public void run() {
+	        // Cancel discovery because it will slow down the connection
+	        mBluetoothAdapter.cancelDiscovery();
+	 
+	        try {
+	            // Connect the device through the socket. This will block
+	            // until it succeeds or throws an exception
+	            mmSocket.connect();
+	        } catch (IOException connectException) {
+	            // Unable to connect; close the socket and get out
+	            try {
+	                mmSocket.close();
+	            } catch (IOException closeException) { }
+	            return;
+	        }
+	    }
+	 
+	    // Will cancel an in-progress connection, and close the socket
+	    public void cancel() {
+	        try {
+	            mmSocket.close();
+	        } catch (IOException e) { }
+	    }
+	}
+	
+	private class ConnectedThread extends Thread {
+	    private final BluetoothSocket mmSocket;
+	    private final InputStream mmInStream;
+	 
+	    public ConnectedThread(BluetoothSocket socket) {
+	        mmSocket = socket;
+	        InputStream tmpIn = null;
+	 
+	        // Get the input and output streams, using temp objects because
+	        // member streams are final
+	        try {
+	            tmpIn = socket.getInputStream();
+	        } catch (IOException e) { }
+	 
+	        mmInStream = tmpIn;
+	    }
+	 
+	    public void run() {
+	        byte[] buffer = new byte[1024];  // buffer store for the stream
+	        int begin = 0;
+	        int bytes = 0; // bytes returned from read()
+	 
+	        Handler mHandler;
+			// Keep listening to the InputStream until an exception occurs
+	        while (true) {
+	            try {
+	            	bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
+	     	        for(int i = begin; i < bytes; i++) {
+	     		        if(buffer[i] == "#".getBytes()[0]) {
+	     		        	mHandler.obtainMessage(1, begin, i, buffer).sendToTarget();
+	     		        	begin = i + 1;
+	     		        	if(i == bytes - 1) {
+	     		        		bytes = 0;
+	     		        		begin = 0;
+	     		        	}
+	     		        } 
+	     	        }
+	            } catch (IOException e) {
+	                break;
+	            }
+	        }
+
+	    }
+	 
+	    // Call this from the main activity to shutdown the connection 
+	    public void cancel() {
+	        try {
+	            mmSocket.close();
+	        } catch (IOException e) { }
+	    }
+	}
+	*/
+	
  
 }
