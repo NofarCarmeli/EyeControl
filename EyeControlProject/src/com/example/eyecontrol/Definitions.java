@@ -27,7 +27,8 @@ public class Definitions {
 	public int time_between_gestures = 2; // in seconds
 	public char first_menu = '1';
 	public char first_language = 'h'; // must be 'e' or 'h'
-	public String no_text = "Nothing to read";
+	public String eng_no_text = "Nothing to read";
+	public String heb_no_text = "לא נכתב כלום";
 	public String alarm_seq = "BB";
 	
 	public Map <String, Action> seq_map;

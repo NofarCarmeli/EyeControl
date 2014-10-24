@@ -149,7 +149,7 @@ public class MainActivity extends Activity implements OnInitListener{
 	}
 	
 	private void speakWords(String speech) {
-		myTTS.speak(speech, TextToSpeech.QUEUE_ADD, null);
+		myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null); // can use QUEUE_ADD
 	}
 	
 	// gesture identification: (will be replaced with bluetooth receiver)
@@ -239,9 +239,9 @@ public class MainActivity extends Activity implements OnInitListener{
 	}
 	
 	private void readTextFromEditor() {
-		String to_read = text_editor.getText();
-		if (to_read.equals("")) {
-			to_read = def.no_text;
+		String to_read = text_editor.extractText();
+		if (to_read.equals("") || to_read.equals(" ")) {
+			to_read = lang=='e' ? def.eng_no_text : def.heb_no_text;
 		}
 		audio_manager.setSpeakerphoneOn(true);
 		speakWords(to_read);
