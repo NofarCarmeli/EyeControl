@@ -12,5 +12,10 @@
         android:id="@+id/heb_user_guide"
         android:title="@string/heb_user_guide"
         app:showAsAction="never"/>
+    
+    <item
+        android:id="@+id/toggle_screen"
+        android:title="@string/toggle_screen"
+        app:showAsAction="never"/>
 
 </menu>

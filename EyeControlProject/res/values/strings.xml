@@ -11,5 +11,6 @@
     <string name="title_activity_user_guide">User Guide</string>
     <string name="heb_guide">שלום עולם!</string>
     <string name="eng_guide">Hello world!</string>
+    <string name="toggle_screen">Toggle screen lock</string>
 
 </resources>

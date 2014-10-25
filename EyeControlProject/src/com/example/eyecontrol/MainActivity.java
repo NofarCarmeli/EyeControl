@@ -2,16 +2,19 @@ package com.example.eyecontrol;
 
 import java.util.Locale;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.view.GestureDetectorCompat;
+import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -111,6 +114,18 @@ public class MainActivity extends Activity implements OnInitListener {
 	        	Intent heb_intent = new Intent(this, HebUserGuide.class);
 	        	startActivity(heb_intent);
 	            return true;
+	        case R.id.toggle_screen:
+	        	if (mode_view.getKeepScreenOn()) {
+	        		mode_view.setKeepScreenOn(false);
+	        		Toast.makeText(getApplicationContext(),
+	        				"Screen will turn off as usual" 
+					         ,Toast.LENGTH_LONG).show();
+	        	} else {
+	        		mode_view.setKeepScreenOn(true);
+	        		Toast.makeText(getApplicationContext(),
+	        				"Screen will stay on" 
+					         ,Toast.LENGTH_LONG).show();
+	        	}
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }

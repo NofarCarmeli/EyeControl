@@ -303,6 +303,7 @@ int id split_action_bar 0x7f06001e
 int id submit_area 0x7f060039
 int id tabMode 0x7f060002
 int id title 0x7f06002b
+int id toggle_screen 0x7f060044
 int id top_action_bar 0x7f060020
 int id up 0x7f060021
 int id useLogo 0x7f060003
@@ -379,6 +380,7 @@ int string heb_guide 0x7f0b0015
 int string heb_user_guide 0x7f0b0011
 int string title_activity_heb_user_guide 0x7f0b0013
 int string title_activity_user_guide 0x7f0b0014
+int string toggle_screen 0x7f0b0017
 int string user_guide 0x7f0b0010
 int style AppBaseTheme 0x7f0c008b
 int style AppTheme 0x7f0c008c
