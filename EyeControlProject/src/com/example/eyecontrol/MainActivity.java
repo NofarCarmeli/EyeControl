@@ -228,7 +228,7 @@ public class MainActivity extends Activity implements OnInitListener{
 	}
 	
 	private void changeModeDisplay(char mode) {
-		mode_view.setText(def.menu_map.get(mode)+" mode:");
+		mode_view.setText(def.menu_map.get(mode)+" Mode:");
 		int board_res_id = getResources().getIdentifier("menu"+mode,"drawable",getPackageName());
 		board_view.setImageResource(board_res_id);
 		instructions_view.setText(def.instructions.get(mode));
