@@ -1,15 +1,10 @@
 package com.example.eyecontrol;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -30,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class MainActivity extends Activity implements OnInitListener{ 
+public class MainActivity extends Activity implements OnInitListener { 
     
 	// to read gestures
 	private GestureDetectorCompat mDetector;
@@ -155,6 +150,11 @@ public class MainActivity extends Activity implements OnInitListener{
 		myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null); // can use QUEUE_ADD
 	}
 	
+	private void cancelSpeaking() {
+		myTTS.stop();
+	}
+	
+	
 	// gesture identification: (will be replaced with bluetooth receiver)
 	
 	@Override 
@@ -208,6 +208,7 @@ public class MainActivity extends Activity implements OnInitListener{
 			alarm_player.prepareAsync();
 			but.setVisibility(View.GONE);
 		} else {
+			cancelSpeaking();
 			audio_manager.setSpeakerphoneOn(true);
 			alarm_player.start();
 			but.setVisibility(View.VISIBLE);
@@ -217,14 +218,18 @@ public class MainActivity extends Activity implements OnInitListener{
 	private void speakRecordedSentence(char sentence_id) {
 		int res_id = getResources().getIdentifier(String.valueOf(lang)+sentence_id,"raw",getPackageName());
 		final MediaPlayer mediaPlayer = MediaPlayer.create(getBaseContext(), res_id);
+		mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+	        @Override
+	        public void onCompletion(MediaPlayer mediaPlayer) {
+	            mediaPlayer.stop();
+	            if (mediaPlayer != null) {
+	            	mediaPlayer.release();
+	            }
+	        }
+	    });
+		cancelSpeaking();
 		audio_manager.setSpeakerphoneOn(true);
 		mediaPlayer.start();
-		Handler sHandler = new Handler();
-		sHandler.postDelayed(new Runnable() {
-			public void run() {
-				mediaPlayer.release();
-			}
-		}, 1000);
 	}
 	
 	private void changeModeDisplay(char mode) {
@@ -267,14 +272,19 @@ public class MainActivity extends Activity implements OnInitListener{
 		if (alarm_player.isPlaying()) {
 			alarm_player.stop();
 		}
-		alarm_player.release();
+		if (alarm_player != null) {
+			alarm_player.release();
+        }
 		// turn off
+		
 		Handler pHandler = new Handler();
 		pHandler.postDelayed(new Runnable() {
 			public void run() {
+				myTTS.shutdown();
+				audio_manager.setMode(AudioManager.MODE_NORMAL);
 				finish();
 			}
-		}, 1000);
+		}, 2000);
 	}
 
     
@@ -328,6 +338,7 @@ public class MainActivity extends Activity implements OnInitListener{
 			break;
 		}
 	}
+
 	
 	//TODO BT
 	/*
