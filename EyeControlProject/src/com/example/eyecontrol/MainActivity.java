@@ -129,7 +129,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			}
 		} else if (requestCode == REQUEST_ENABLE_BT)  { //TODO BT
 			if (resultCode == RESULT_CANCELED) {
-				Toast.makeText(getApplicationContext(),"Bluetooth must be activated" 
+				Toast.makeText(getApplicationContext(),"Please turn Bluetooth on.\nThis app does not work without Bluetooth." 
 				         ,Toast.LENGTH_LONG).show();
 			} /*else {
 				BluetoothDevice mDevice; //TODO
@@ -233,7 +233,7 @@ public class MainActivity extends Activity implements OnInitListener {
 	}
 	
 	private void changeModeDisplay(char mode) {
-		mode_view.setText(def.menu_map.get(mode)+" Mode:");
+		mode_view.setText(def.menu_map.get(mode)+" Mode");
 		int board_res_id = getResources().getIdentifier("menu"+mode,"drawable",getPackageName());
 		board_view.setImageResource(board_res_id);
 		instructions_view.setText(def.instructions.get(mode));
@@ -284,7 +284,7 @@ public class MainActivity extends Activity implements OnInitListener {
 				audio_manager.setMode(AudioManager.MODE_NORMAL);
 				finish();
 			}
-		}, 2000);
+		}, 3000);
 	}
 
     
