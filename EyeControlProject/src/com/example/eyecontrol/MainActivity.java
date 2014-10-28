@@ -42,11 +42,9 @@ public class MainActivity extends Activity implements OnInitListener {
 	private static TextEditor text_editor;
 	private static GestureTranslator translator;
 	private static Definitions def;
-	private static TextView mode_view;
-	private static TextView instructions_view;
-	private static ImageView board_view;
 	private static MediaPlayer alarm_player;
 	private static AudioManager audio_manager;
+	private static DisplayManipulator display;
 	// mode variables
 	private boolean verbose = true;
 	private char lang;
@@ -75,21 +73,17 @@ public class MainActivity extends Activity implements OnInitListener {
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 		// more static initializations
 		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());
-		mode_view = ((TextView)findViewById (R.id.mode_name));
-		TextView last_gesture_view = ((TextView)findViewById (R.id.last_gesture));
-		board_view = (ImageView) findViewById(R.id.boardImageView);
 		def = new Definitions();
-		translator = new GestureTranslator(def, last_gesture_view);
 		text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
 		alarm_player = MediaPlayer.create(getBaseContext(), R.raw.alarm);
 		alarm_player.setLooping(true);
 		audio_manager = (AudioManager)getSystemService(AUDIO_SERVICE);
 		audio_manager.setMode(AudioManager.MODE_IN_CALL);
-		instructions_view = ((TextView)findViewById (R.id.boardDisplayInstructions));
+		View main_view = findViewById(android.R.id.content);
+		display = new DisplayManipulator(getBaseContext(), def, main_view);
+		translator = new GestureTranslator(def, display);
 		// state initialization
 		lang = def.first_language;
-		changeModeDisplay(def.first_menu);
-		instructions_view.setVisibility(View.GONE);
 	}
 	
 	// to show menu:
@@ -115,17 +109,7 @@ public class MainActivity extends Activity implements OnInitListener {
 	        	startActivity(heb_intent);
 	            return true;
 	        case R.id.toggle_screen:
-	        	if (mode_view.getKeepScreenOn()) {
-	        		mode_view.setKeepScreenOn(false);
-	        		Toast.makeText(getApplicationContext(),
-	        				"Screen will turn off as usual" 
-					         ,Toast.LENGTH_LONG).show();
-	        	} else {
-	        		mode_view.setKeepScreenOn(true);
-	        		Toast.makeText(getApplicationContext(),
-	        				"Screen will stay on" 
-					         ,Toast.LENGTH_LONG).show();
-	        	}
+	        	display.toggleScreenLock();
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
@@ -217,17 +201,15 @@ public class MainActivity extends Activity implements OnInitListener {
 	}
     
 	private void toggleAlarm() {
-		Button but = (Button) findViewById(R.id.alarmToggleButton);
 		if (alarm_player.isPlaying()) {
 			alarm_player.stop();
 			alarm_player.prepareAsync();
-			but.setVisibility(View.GONE);
 		} else {
 			cancelSpeaking();
 			audio_manager.setSpeakerphoneOn(true);
 			alarm_player.start();
-			but.setVisibility(View.VISIBLE);
 		}
+		display.toggleAlarmButton();
 	}
 	
 	private void speakRecordedSentence(char sentence_id) {
@@ -245,23 +227,6 @@ public class MainActivity extends Activity implements OnInitListener {
 		cancelSpeaking();
 		audio_manager.setSpeakerphoneOn(true);
 		mediaPlayer.start();
-	}
-	
-	private void changeModeDisplay(char mode) {
-		mode_view.setText(def.menu_map.get(mode)+" Mode");
-		int board_res_id = getResources().getIdentifier("menu"+mode,"drawable",getPackageName());
-		board_view.setImageResource(board_res_id);
-		instructions_view.setText(def.instructions.get(mode));
-	}
-	
-	private void toggleBoardDisplay() {
-		if (board_view.getVisibility() == View.VISIBLE) {
-			board_view.setVisibility(View.GONE);
-			instructions_view.setVisibility(View.VISIBLE);
-		} else {
-			instructions_view.setVisibility(View.GONE);
-			board_view.setVisibility(View.VISIBLE);
-		}
 	}
 	
 	private void readTextFromEditor() {
@@ -319,7 +284,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			powerOff();
 			break;
 		case MODE:
-			changeModeDisplay(a.character);	
+			display.setMode(a.character);
 			break;
 		case ALARM:
 			toggleAlarm();
@@ -347,7 +312,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			text_editor.clear();
 			break;
 		case DISPLAY:
-			toggleBoardDisplay();
+			display.toggleBoard();
 			break;
 		default:
 			break;

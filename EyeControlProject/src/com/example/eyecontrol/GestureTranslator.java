@@ -1,19 +1,18 @@
 package com.example.eyecontrol;
 
-import android.widget.TextView;
 
 
 public class GestureTranslator {    
 	
-	static private TextView last_gesture;
+	static private DisplayManipulator display;
 	static private Definitions def;
 	
 	private char mode;
 	private String gestures = String.valueOf(mode);
 	private long last_time;
 
-	GestureTranslator(Definitions d, TextView debug_v) {
-		last_gesture = debug_v;
+	GestureTranslator(Definitions d, DisplayManipulator dis) {
+		display = dis;
 		def = d;
 		mode = def.first_menu;
 		last_time = System.nanoTime();
@@ -26,32 +25,9 @@ public class GestureTranslator {
 	
 	private void addToGestures(char c) {
 		gestures+=c;
-		updateLastGestureDisplay(c);
+		display.setLastGesture(c);
 	} 
-	
-	private void updateLastGestureDisplay(char c) {
-		String text = "";
-		switch (c) {
-		case 'U':
-			text = "Up";
-			break;
-		case 'D':
-			text = "Down";
-			break;
-		case 'R':
-			text = "Right";
-			break;
-		case 'L':
-			text = "Left";
-			break;
-		case 'B':
-			text = "Blink";
-			break;
-		}
-		last_gesture.setText("Last gesture: "+text);
-	}
 
-	
 	public Action getGesture(char c) {
 	    
 		// clear previous gestures if too long has passed
