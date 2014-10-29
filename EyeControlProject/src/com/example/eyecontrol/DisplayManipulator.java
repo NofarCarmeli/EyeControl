@@ -2,6 +2,8 @@ package com.example.eyecontrol;
 
 import android.content.Context;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,6 +55,9 @@ public class DisplayManipulator {
 			break;
 		}
 		gesture_view.setText("Last gesture: "+text);
+		Animation anim = new AlphaAnimation(0.0f, 1.0f);
+		anim.setDuration(50);
+		gesture_view.startAnimation(anim);
 	}
 	
 	public void setMode(char mode) {
