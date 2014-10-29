@@ -1,20 +1,12 @@
 package com.example.eyecontrol;
 
-import java.util.Locale;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.view.GestureDetectorCompat;
-import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -22,19 +14,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class MainActivity extends Activity implements OnInitListener { 
+public class MainActivity extends Activity  {
     
 	// to read gestures
 	private GestureDetectorCompat mDetector;
 	// to speak
 	private int MY_DATA_CHECK_CODE = 0;
-	private TextToSpeech myTTS;
 	// for bluetooth
 	private int REQUEST_ENABLE_BT = 1;
 	private BluetoothAdapter mBluetoothAdapter;
@@ -42,8 +31,7 @@ public class MainActivity extends Activity implements OnInitListener {
 	private static TextEditor text_editor;
 	private static GestureTranslator translator;
 	private static Definitions def;
-	private static MediaPlayer alarm_player;
-	private static AudioManager audio_manager;
+	private static AudioController audio;
 	private static DisplayManipulator display;
 	// mode variables
 	private boolean verbose = true;
@@ -67,7 +55,7 @@ public class MainActivity extends Activity implements OnInitListener {
 		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 		    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
-		// to speak
+		// initialize TTS
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
@@ -75,13 +63,9 @@ public class MainActivity extends Activity implements OnInitListener {
 		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());
 		def = new Definitions();
 		text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
-		alarm_player = MediaPlayer.create(getBaseContext(), R.raw.alarm);
-		alarm_player.setLooping(true);
-		audio_manager = (AudioManager)getSystemService(AUDIO_SERVICE);
-		audio_manager.setMode(AudioManager.MODE_IN_CALL);
-		View main_view = findViewById(android.R.id.content);
-		display = new DisplayManipulator(getBaseContext(), def, main_view);
+		display = new DisplayManipulator(getBaseContext(), def, findViewById(android.R.id.content));
 		translator = new GestureTranslator(def, display);
+		audio = new AudioController(getBaseContext(), def);
 		// state initialization
 		lang = def.first_language;
 	}
@@ -115,18 +99,11 @@ public class MainActivity extends Activity implements OnInitListener {
 	    }
 	}
 	
-	// text to speech methods:
-	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == MY_DATA_CHECK_CODE) {
-			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {      
-				myTTS = new TextToSpeech(this, this);
-			} else {
-				Intent installTTSIntent = new Intent();
-				installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-				startActivity(installTTSIntent);
-			}
-		} else if (requestCode == REQUEST_ENABLE_BT)  { //TODO BT
+			audio.initTTS(resultCode);
+		} else
+		if (requestCode == REQUEST_ENABLE_BT)  { //TODO BT
 			if (resultCode == RESULT_CANCELED) {
 				Toast.makeText(getApplicationContext(),"Please turn Bluetooth on.\nThis app does not work without Bluetooth." 
 				         ,Toast.LENGTH_LONG).show();
@@ -138,22 +115,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			}*/
 		}
 	}
-	
-	public void onInit(int initStatus) {
-		if (initStatus == TextToSpeech.SUCCESS) {
-			myTTS.setLanguage(Locale.US);
-		}
-	}
-	
-	private void speakWords(String speech) {
-		myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null); // can use QUEUE_ADD
-	}
-	
-	private void cancelSpeaking() {
-		myTTS.stop();
-	}
-	
-	
+
 	// gesture identification: (will be replaced with bluetooth receiver)
 	
 	@Override 
@@ -201,73 +163,20 @@ public class MainActivity extends Activity implements OnInitListener {
 	}
     
 	private void toggleAlarm() {
-		if (alarm_player.isPlaying()) {
-			alarm_player.stop();
-			alarm_player.prepareAsync();
-		} else {
-			cancelSpeaking();
-			audio_manager.setSpeakerphoneOn(true);
-			alarm_player.start();
-		}
+		audio.toggleAlarm();
 		display.toggleAlarmButton();
 	}
-	
-	private void speakRecordedSentence(char sentence_id) {
-		int res_id = getResources().getIdentifier(String.valueOf(lang)+sentence_id,"raw",getPackageName());
-		final MediaPlayer mediaPlayer = MediaPlayer.create(getBaseContext(), res_id);
-		mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-	        @Override
-	        public void onCompletion(MediaPlayer mediaPlayer) {
-	            mediaPlayer.stop();
-	            if (mediaPlayer != null) {
-	            	mediaPlayer.release();
-	            }
-	        }
-	    });
-		cancelSpeaking();
-		audio_manager.setSpeakerphoneOn(true);
-		mediaPlayer.start();
-	}
-	
-	private void readTextFromEditor() {
-		String to_read = text_editor.extractText();
-		if (to_read.equals("") || to_read.equals(" ")) {
-			to_read = lang=='e' ? def.eng_no_text : def.heb_no_text;
-		}
-		audio_manager.setSpeakerphoneOn(true);
-		speakWords(to_read);
-	}
-	
-	private void readActionDescription(Action a){
-		audio_manager.setSpeakerphoneOn(false);
-		if (lang=='e' && !a.eng_desc.equals("")) {
-			speakWords(a.eng_desc);
-		} else if (lang=='h' && !a.heb_desc.equals("")) {
-			speakWords(a.heb_desc);
-		}
-	}
-	
+
 	private void powerOff() {
-		// turn alarm off if it is working, and release the player
-		if (alarm_player.isPlaying()) {
-			alarm_player.stop();
-		}
-		if (alarm_player != null) {
-			alarm_player.release();
-        }
-		// turn off
-		
 		Handler pHandler = new Handler();
 		pHandler.postDelayed(new Runnable() {
 			public void run() {
-				myTTS.shutdown();
-				audio_manager.setMode(AudioManager.MODE_NORMAL);
+				audio.release();
 				finish();
 			}
 		}, 3000);
 	}
 
-    
 	// handling gestures:
     
 	public void getGesture(char c) {
@@ -276,7 +185,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			return;
 		}
 		if (verbose) {
-			readActionDescription(a);
+			audio.readActionDescription(a, lang);
 		}
 		
 		switch (a.action) {
@@ -290,14 +199,14 @@ public class MainActivity extends Activity implements OnInitListener {
 			toggleAlarm();
 			break;
 		case SPEAK:
-			speakRecordedSentence(a.character);
+			audio.speakRecordedSentence(a.character, lang);
 			break;
 		case LANGUAGE:
 			lang = (lang=='e')? 'h' : 'e';
 			break;
 		case CHARACTER:
 			if (a.character == ' ' && text_editor.isLastSpace()) {
-				readTextFromEditor();
+				audio.readAloud(text_editor.extractText(), lang);
 			} else {
 				text_editor.addLetter(a.character);
 			}
@@ -306,7 +215,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			text_editor.deleteLetter();
 			break;
 		case READ:
-			readTextFromEditor();
+			audio.readAloud(text_editor.extractText(), lang);
 			break;
 		case CLEAR:
 			text_editor.clear();
