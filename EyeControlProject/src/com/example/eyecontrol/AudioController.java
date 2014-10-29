@@ -15,15 +15,14 @@ public class AudioController implements OnInitListener {
 	
 	private static Context context;
 	private PropertiesRetriever properties;
-	private static MediaPlayer alarm_player;
+	private MediaPlayer alarm_player;
 	private static AudioManager audio_manager;
 	private TextToSpeech myTTS;
 	
 	AudioController(Context con, PropertiesRetriever properties) {
 		this.properties = properties;
 		context = con;
-		alarm_player = MediaPlayer.create(context, R.raw.alarm);
-		alarm_player.setLooping(true);
+		alarm_player = null;
 		audio_manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		audio_manager.setMode(AudioManager.MODE_IN_CALL);
 	}
@@ -77,12 +76,19 @@ public class AudioController implements OnInitListener {
 	
 	
 	// toggles the alarm sound
-	public void toggleAlarm() {
-		if (alarm_player.isPlaying()) {
+	public void toggleAlarm(char lang) {
+		if (alarm_player != null) {
 			alarm_player.stop();
-			alarm_player.prepareAsync();
+			alarm_player.release();
+			alarm_player = null;
 		} else {
 			cancelSpeaking();
+			if (lang == 'e') {
+				alarm_player = MediaPlayer.create(context, R.raw.eng_alarm);
+			} else {
+				alarm_player = MediaPlayer.create(context, R.raw.heb_alarm);
+			}
+			alarm_player.setLooping(true);
 			audio_manager.setSpeakerphoneOn(true);
 			alarm_player.start();
 		}
@@ -116,12 +122,12 @@ public class AudioController implements OnInitListener {
 		// release TTS engine
 		myTTS.shutdown();
 		// release alarm player
-		if (alarm_player.isPlaying()) {
-			alarm_player.stop();
-		}
 		if (alarm_player != null) {
+			if (alarm_player.isPlaying()) {
+				alarm_player.stop();
+			}
 			alarm_player.release();
-        }
+		}
 		// go back to normal audio mode
 		audio_manager.setMode(AudioManager.MODE_NORMAL);
 	}

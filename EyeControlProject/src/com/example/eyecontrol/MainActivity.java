@@ -127,7 +127,7 @@ public class MainActivity extends Activity  {
     
 	// Called when alarm button is clicked
 	public void onToggleClicked(View view) {
-		audio.toggleAlarm();
+		audio.toggleAlarm(lang);
 		display.toggleAlarmButton();
 	}
 
@@ -153,7 +153,7 @@ public class MainActivity extends Activity  {
 			display.setMode(a.character);
 			break;
 		case ALARM:
-			audio.toggleAlarm();
+			audio.toggleAlarm(lang);
 			display.toggleAlarmButton();
 			break;
 		case SPEAK:
