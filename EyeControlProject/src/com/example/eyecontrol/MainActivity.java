@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.view.GestureDetectorCompat;
 import android.text.method.ScrollingMovementMethod;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,30 +19,27 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity  {
     
-	// to read gestures
-	private GestureDetectorCompat mDetector;
-	// to speak
+	// for TTS initialization
 	private int MY_DATA_CHECK_CODE = 0;
-	// for bluetooth
+	// for Bluetooth
 	private int REQUEST_ENABLE_BT = 1;
 	private BluetoothAdapter mBluetoothAdapter;
-	// objects with jobs
+	// objects with responsibilities
+	private static Definitions def;
+	private GestureDetectorCompat gesture_detector;
 	private static TextEditor text_editor;
 	private static GestureTranslator translator;
-	private static Definitions def;
 	private static AudioController audio;
 	private static DisplayManipulator display;
-	// mode variables
-	private boolean verbose = true;
+	// state variables
 	private char lang;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		// initialize view
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		// to read gestures
-		mDetector = new GestureDetectorCompat(this, new MyGestureListener());
-		// activate bluetooth // TODO BT
+		// activate bluetooth
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (mBluetoothAdapter == null) {
 		    // Device does not support Bluetooth
@@ -59,18 +55,45 @@ public class MainActivity extends Activity  {
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
-		// more static initializations
+		// initialize objects
 		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());
 		def = new Definitions();
+		gesture_detector = new GestureDetectorCompat(this, new GestureListener(this));
 		text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
 		display = new DisplayManipulator(getBaseContext(), def, findViewById(android.R.id.content));
 		translator = new GestureTranslator(def, display);
 		audio = new AudioController(getBaseContext(), def);
-		// state initialization
+		// initialize language state
 		lang = def.first_language;
 	}
 	
-	// to show menu:
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// initialize TTS
+		if (requestCode == MY_DATA_CHECK_CODE) {
+			audio.initTTS(resultCode);
+		} else
+		// initialize Bluetooth
+		if (requestCode == REQUEST_ENABLE_BT)  {
+			if (resultCode == RESULT_CANCELED) {
+				Toast.makeText(getApplicationContext(),"Please turn Bluetooth on.\nThis app does not work without Bluetooth." 
+				         ,Toast.LENGTH_LONG).show();
+			} /*else {
+				BluetoothDevice mDevice;
+				ConnectThread mConnectThread = new ConnectThread(mDevice);
+				mConnectThread.start();
+
+			}*/
+		}
+	}
+	
+	// gesture identification initialization
+	@Override 
+	public boolean onTouchEvent(MotionEvent event){ 
+		this.gesture_detector.onTouchEvent(event);
+		return super.onTouchEvent(event);
+	}
+	
+	// Action bar overflow menu functions
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,105 +121,38 @@ public class MainActivity extends Activity  {
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
-	
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == MY_DATA_CHECK_CODE) {
-			audio.initTTS(resultCode);
-		} else
-		if (requestCode == REQUEST_ENABLE_BT)  { //TODO BT
-			if (resultCode == RESULT_CANCELED) {
-				Toast.makeText(getApplicationContext(),"Please turn Bluetooth on.\nThis app does not work without Bluetooth." 
-				         ,Toast.LENGTH_LONG).show();
-			} /*else {
-				BluetoothDevice mDevice; //TODO
-				ConnectThread mConnectThread = new ConnectThread(mDevice);
-				mConnectThread.start();
 
-			}*/
-		}
-	}
-
-	// gesture identification: (will be replaced with bluetooth receiver)
-	
-	@Override 
-	public boolean onTouchEvent(MotionEvent event){ 
-		this.mDetector.onTouchEvent(event);
-		return super.onTouchEvent(event);
-	}
     
-	class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-	    
-		private static final int SWIPE_DISTANCE_THRESHOLD = 100;
-		private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-		
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-			float distanceX = e2.getX() - e1.getX();
-			float distanceY = e2.getY() - e1.getY();
-			if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > SWIPE_DISTANCE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-				if (distanceX > 0) {
-				   	getGesture('R');
-				} else {
-					getGesture('L');
-				}
-			} else if (Math.abs(distanceY) > SWIPE_DISTANCE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-				if (distanceY > 0) {
-					getGesture('D');
-				} else {
-					getGesture('U');
-				}
-			}
-			return true;
-		}
-		 
-		public boolean onDoubleTap(MotionEvent event) {
-			getGesture('B');
-			return true;
-		}
-		
-	}
-    
-	// action helpers:
-    
+	// Called when alarm button is clicked
 	public void onToggleClicked(View view) {
-		toggleAlarm();
-	}
-    
-	private void toggleAlarm() {
 		audio.toggleAlarm();
 		display.toggleAlarmButton();
 	}
 
-	private void powerOff() {
-		Handler pHandler = new Handler();
-		pHandler.postDelayed(new Runnable() {
-			public void run() {
-				audio.release();
-				finish();
-			}
-		}, 3000);
-	}
-
-	// handling gestures:
-    
-	public void getGesture(char c) {
+	
+	// Called when gesture is received
+	public void onGestureReceived(char c) {
 		Action a = translator.getGesture(c);
 		if (a ==null) {
 			return;
 		}
-		if (verbose) {
-			audio.readActionDescription(a, lang);
-		}
-		
+		audio.readActionDescription(a, lang);
 		switch (a.action) {
 		case POWER:
-			powerOff();
+			Handler pHandler = new Handler();
+			pHandler.postDelayed(new Runnable() {
+				public void run() {
+					audio.release();
+					finish();
+				}
+			}, 3000);
 			break;
 		case MODE:
 			display.setMode(a.character);
 			break;
 		case ALARM:
-			toggleAlarm();
+			audio.toggleAlarm();
+			display.toggleAlarmButton();
 			break;
 		case SPEAK:
 			audio.speakRecordedSentence(a.character, lang);
