@@ -26,6 +26,7 @@ public class MainActivity extends Activity  {
 	private BluetoothAdapter mBluetoothAdapter;
 	// objects with responsibilities
 	private static Definitions def;
+	private static PropertiesRetriever properties;
 	private GestureDetectorCompat gesture_detector;
 	private static TextEditor text_editor;
 	private static GestureTranslator translator;
@@ -58,13 +59,14 @@ public class MainActivity extends Activity  {
 		// initialize objects
 		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());
 		def = new Definitions();
+		properties = new PropertiesRetriever(getBaseContext());
 		gesture_detector = new GestureDetectorCompat(this, new GestureListener(this));
 		text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
-		display = new DisplayManipulator(getBaseContext(), def, findViewById(android.R.id.content));
-		translator = new GestureTranslator(def, display);
-		audio = new AudioController(getBaseContext(), def);
+		display = new DisplayManipulator(getBaseContext(), properties, findViewById(android.R.id.content));
+		translator = new GestureTranslator(def, properties, display);
+		audio = new AudioController(getBaseContext(), properties);
 		// initialize language state
-		lang = def.first_language;
+		lang = properties.get("first_language").charAt(0);
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -6,15 +6,17 @@ public class GestureTranslator {
 	
 	static private DisplayManipulator display;
 	static private Definitions def;
+	private PropertiesRetriever properties;
 	
 	private char mode;
 	private String gestures = String.valueOf(mode);
 	private long last_time;
 
-	GestureTranslator(Definitions d, DisplayManipulator dis) {
+	GestureTranslator(Definitions d, PropertiesRetriever properties, DisplayManipulator dis) {
 		display = dis;
 		def = d;
-		mode = def.first_menu;
+		this.properties = properties;
+		mode = properties.get("first_menu").charAt(0);
 		last_time = System.nanoTime();
 		clearGestures();
 	}
@@ -32,7 +34,7 @@ public class GestureTranslator {
 	    
 		// clear previous gestures if too long has passed
 		long cur_time = System.nanoTime();
-		long allowed_time_difference = 1000000000*def.time_between_gestures;
+		long allowed_time_difference = 1000000000*Integer.valueOf(properties.get("time_between_gestures"));
 		if (cur_time-last_time>allowed_time_difference) {
 			clearGestures();
 		}
@@ -46,7 +48,7 @@ public class GestureTranslator {
 				mode = a.character;
 			}
 			clearGestures(); // should be after changing mode
-		} else if (gestures.contains(def.alarm_seq)) {
+		} else if (gestures.contains(properties.get("alarm_seq"))) {
 			a = new Action ("", "", Action.Type.ALARM);
 			clearGestures();
 		}

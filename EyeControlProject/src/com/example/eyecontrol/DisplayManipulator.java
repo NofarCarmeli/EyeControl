@@ -10,15 +10,15 @@ import android.widget.Toast;
 public class DisplayManipulator {
 	
 	private static Context context;
-	private static Definitions def;
+	private PropertiesRetriever properties;
 	private static TextView mode_view;
 	private static TextView instructions_view;
 	private static TextView gesture_view;
 	private static ImageView board_view;
 	private static Button alarm_button;
 	
-	DisplayManipulator(Context con, Definitions definitions, View view) {
-		def = definitions;
+	DisplayManipulator(Context con, PropertiesRetriever properties, View view) {
+		this.properties = properties;
 		context = con;
 		alarm_button = (Button) view.findViewById(R.id.alarmToggleButton);
 		mode_view = (TextView) view.findViewById(R.id.mode_name);
@@ -30,7 +30,7 @@ public class DisplayManipulator {
 	
 	private void initDisplay() {
 		instructions_view.setVisibility(View.GONE);
-		setMode(def.first_menu);
+		setMode(properties.get("first_menu").charAt(0));
 	}
 	
 	public void setLastGesture(char gesture) {
@@ -56,11 +56,11 @@ public class DisplayManipulator {
 	}
 	
 	public void setMode(char mode) {
-		mode_view.setText(def.menu_map.get(mode)+" Mode");
+		mode_view.setText(properties.getMenuName(mode)+" Mode");
 		int board_res_id = context.getResources().getIdentifier(
 				"menu"+mode,"drawable",context.getPackageName());
 		board_view.setImageResource(board_res_id);
-		instructions_view.setText(def.instructions.get(mode));
+		instructions_view.setText(properties.getInstructions(mode));
 	}
 	
 	public void toggleBoard() {

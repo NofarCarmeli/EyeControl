@@ -14,13 +14,13 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 public class AudioController implements OnInitListener {
 	
 	private static Context context;
-	private static Definitions def;
+	private PropertiesRetriever properties;
 	private static MediaPlayer alarm_player;
 	private static AudioManager audio_manager;
 	private TextToSpeech myTTS;
 	
-	AudioController(Context con, Definitions defs) {
-		def = defs;
+	AudioController(Context con, PropertiesRetriever properties) {
+		this.properties = properties;
 		context = con;
 		alarm_player = MediaPlayer.create(context, R.raw.alarm);
 		alarm_player.setLooping(true);
@@ -58,7 +58,7 @@ public class AudioController implements OnInitListener {
 	// reads the given sentence. replaces with predetermined sentences if empty.
 	public void readAloud(String to_read, char lang) {
 		if (to_read.equals("") || to_read.equals(" ")) {
-			to_read = lang=='e' ? def.eng_no_text : def.heb_no_text;
+			to_read = lang=='e' ? properties.get("eng_no_text") : properties.get("heb_no_text");
 		}
 		audio_manager.setSpeakerphoneOn(true);
 		speakWords(to_read);
