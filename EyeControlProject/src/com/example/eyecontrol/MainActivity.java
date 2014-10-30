@@ -1,7 +1,11 @@
 package com.example.eyecontrol;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,7 +27,7 @@ public class MainActivity extends Activity  {
 	private int MY_DATA_CHECK_CODE = 0;
 	// for Bluetooth
 	private int REQUEST_ENABLE_BT = 1;
-	private BluetoothAdapter mBluetoothAdapter;
+	private BluetoothAdapter bluetooth_adapter;
 	// objects with responsibilities
 	private static Definitions def;
 	private static PropertiesRetriever properties;
@@ -41,14 +45,14 @@ public class MainActivity extends Activity  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		// activate bluetooth
-		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		if (mBluetoothAdapter == null) {
+		bluetooth_adapter = BluetoothAdapter.getDefaultAdapter();
+		if (bluetooth_adapter == null) {
 		    // Device does not support Bluetooth
 			Toast.makeText(getApplicationContext(),"Device does not support Bluetooth" 
 			         ,Toast.LENGTH_LONG).show();
 			return;
 		}
-		if (!mBluetoothAdapter.isEnabled()) {
+		if (!bluetooth_adapter.isEnabled()) {
 		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 		    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
@@ -79,12 +83,9 @@ public class MainActivity extends Activity  {
 			if (resultCode == RESULT_CANCELED) {
 				Toast.makeText(getApplicationContext(),"Please turn Bluetooth on.\nThis app does not work without Bluetooth." 
 				         ,Toast.LENGTH_LONG).show();
-			} /*else {
-				BluetoothDevice mDevice;
-				ConnectThread mConnectThread = new ConnectThread(mDevice);
-				mConnectThread.start();
-
-			}*/
+			} else {
+				startBluetoothConnection();
+			}
 		}
 	}
 	
@@ -185,9 +186,31 @@ public class MainActivity extends Activity  {
 			break;
 		}
 	}
-
 	
-	//TODO BT
+	
+	// Bluetooth functions
+	
+	private void startBluetoothConnection() {
+		// find the device
+		BluetoothDevice mDevice = null;
+		Set<BluetoothDevice> pairedDevices = bluetooth_adapter.getBondedDevices();
+		for(BluetoothDevice bt : pairedDevices) {
+	         if (bt.getName().equals("Eye Control")) {
+	        	 mDevice = bt;
+	         }
+		}
+		if (mDevice == null) {
+			Toast.makeText(getApplicationContext(),"No Eye Control device found" 
+			         ,Toast.LENGTH_LONG).show();
+			// turn off?
+			return;
+		}
+		// connect
+		/*ConnectThread mConnectThread = new ConnectThread(mDevice);
+		mConnectThread.start();*/
+	}
+	
+	//TODO
 	/*
 	private class ConnectThread extends Thread {
 	    private final BluetoothSocket mmSocket;
