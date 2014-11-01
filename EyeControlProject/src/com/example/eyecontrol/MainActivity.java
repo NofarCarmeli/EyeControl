@@ -25,7 +25,6 @@ public class MainActivity extends Activity  {
 	private int REQUEST_ENABLE_BT = 1;
 	private BluetoothAdapter bluetooth_adapter;
 	// objects with responsibilities
-	private static Definitions def;
 	private static PropertiesRetriever properties;
 	private GestureDetectorCompat gesture_detector;
 	private static TextEditor text_editor;
@@ -58,12 +57,11 @@ public class MainActivity extends Activity  {
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 		// initialize objects
 		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());
-		def = new Definitions();
 		properties = new PropertiesRetriever(getBaseContext());
 		gesture_detector = new GestureDetectorCompat(this, new GestureListener(this));
 		text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
 		display = new DisplayManipulator(getBaseContext(), properties, findViewById(android.R.id.content));
-		translator = new GestureTranslator(def, properties, display);
+		translator = new GestureTranslator(properties, display);
 		audio = new AudioController(getBaseContext(), properties);
 		// initialize language state
 		lang = properties.get("first_language").charAt(0);

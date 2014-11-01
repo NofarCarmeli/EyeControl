@@ -5,16 +5,14 @@ package com.example.eyecontrol;
 public class GestureTranslator {    
 	
 	static private DisplayManipulator display;
-	static private Definitions def;
 	private PropertiesRetriever properties;
 	
 	private char mode;
 	private String gestures = String.valueOf(mode);
 	private long last_time;
 
-	GestureTranslator(Definitions d, PropertiesRetriever properties, DisplayManipulator dis) {
+	GestureTranslator(PropertiesRetriever properties, DisplayManipulator dis) {
 		display = dis;
-		def = d;
 		this.properties = properties;
 		mode = properties.get("first_menu").charAt(0);
 		last_time = System.nanoTime();
@@ -34,7 +32,7 @@ public class GestureTranslator {
 	    
 		// clear previous gestures if too long has passed
 		long cur_time = System.nanoTime();
-		long allowed_time_difference = 1000000000*Integer.valueOf(properties.get("time_between_gestures"));
+		long allowed_time_difference = 1000000*Integer.valueOf(properties.get("time_between_gestures"));
 		if (cur_time-last_time>allowed_time_difference) {
 			clearGestures();
 		}
@@ -42,7 +40,7 @@ public class GestureTranslator {
 		
 		// add gesture and check for translation
 		addToGestures(c);
-		Action a = def.seq_map.get(gestures);
+		Action a = properties.getAction(gestures);
 		if (a!=null) {
 			if (a.action==Action.Type.MODE) {
 				mode = a.character;
