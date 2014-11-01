@@ -1,11 +1,7 @@
 package com.example.eyecontrol;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -190,7 +186,7 @@ public class MainActivity extends Activity  {
 	
 	// Bluetooth functions
 	
-	private void startBluetoothConnection() {
+	private void startBluetoothConnection() {/*
 		// find the device
 		BluetoothDevice mDevice = null;
 		Set<BluetoothDevice> pairedDevices = bluetooth_adapter.getBondedDevices();
@@ -206,15 +202,16 @@ public class MainActivity extends Activity  {
 			return;
 		}
 		// connect
-		/*ConnectThread mConnectThread = new ConnectThread(mDevice);
+		ConnectThread mConnectThread = new ConnectThread(mDevice);
 		mConnectThread.start();*/
 	}
 	
-	//TODO
-	/*
+/*
 	private class ConnectThread extends Thread {
 	    private final BluetoothSocket mmSocket;
 	    private final BluetoothDevice mmDevice;
+	    
+	    private final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
 	 
 	    public ConnectThread(BluetoothDevice device) {
 	        // Use a temporary object that is later assigned to mmSocket,
@@ -232,7 +229,7 @@ public class MainActivity extends Activity  {
 	 
 	    public void run() {
 	        // Cancel discovery because it will slow down the connection
-	        mBluetoothAdapter.cancelDiscovery();
+	    	bluetooth_adapter.cancelDiscovery();
 	 
 	        try {
 	            // Connect the device through the socket. This will block
@@ -245,9 +242,12 @@ public class MainActivity extends Activity  {
 	            } catch (IOException closeException) { }
 	            return;
 	        }
+	 
+	        // Do work to manage the connection (in a separate thread)
+	        manageConnectedSocket(mmSocket);
 	    }
 	 
-	    // Will cancel an in-progress connection, and close the socket
+	    // Will cancel an in-progress connection, and close the socket 
 	    public void cancel() {
 	        try {
 	            mmSocket.close();
@@ -255,57 +255,43 @@ public class MainActivity extends Activity  {
 	    }
 	}
 	
-	private class ConnectedThread extends Thread {
-	    private final BluetoothSocket mmSocket;
-	    private final InputStream mmInStream;
-	 
-	    public ConnectedThread(BluetoothSocket socket) {
-	        mmSocket = socket;
-	        InputStream tmpIn = null;
-	 
-	        // Get the input and output streams, using temp objects because
-	        // member streams are final
-	        try {
-	            tmpIn = socket.getInputStream();
-	        } catch (IOException e) { }
-	 
-	        mmInStream = tmpIn;
-	    }
-	 
-	    public void run() {
-	        byte[] buffer = new byte[1024];  // buffer store for the stream
-	        int begin = 0;
-	        int bytes = 0; // bytes returned from read()
-	 
-	        Handler mHandler;
-			// Keep listening to the InputStream until an exception occurs
-	        while (true) {
-	            try {
-	            	bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
-	     	        for(int i = begin; i < bytes; i++) {
-	     		        if(buffer[i] == "#".getBytes()[0]) {
-	     		        	mHandler.obtainMessage(1, begin, i, buffer).sendToTarget();
-	     		        	begin = i + 1;
-	     		        	if(i == bytes - 1) {
-	     		        		bytes = 0;
-	     		        		begin = 0;
-	     		        	}
-	     		        } 
-	     	        }
-	            } catch (IOException e) {
-	                break;
-	            }
-	        }
+	
+	private void manageConnectedSocket(BluetoothSocket mmSocket) {
+		InputStream tmpIn = null;
+		 
+        // Get the input and output streams, using temp objects because
+        // member streams are final
+        try {
+            tmpIn = mmSocket.getInputStream();
+        } catch (IOException e) { }
+ 
+        InputStream mmInStream = tmpIn;
+        
+        // run
+        
+        int gesture = 0; // bytes returned from read()
+ 
+        Handler mHandler;
+		// Keep listening to the InputStream until an exception occurs
+        while (true) {
+            try {
+                // Read from the InputStream
+                gesture = mmInStream.read();
+                if (gesture == -1) {
+                	// the end of the stream has been reached
+                	break;
+                }
 
-	    }
-	 
-	    // Call this from the main activity to shutdown the connection 
-	    public void cancel() {
-	        try {
-	            mmSocket.close();
-	        } catch (IOException e) { }
-	    }
+                // Send the obtained bytes to the UI Activity
+                mHandler.obtainMessage(BluetoothChat.MESSAGE_READ, bytes, -1, buffer)
+                        .sendToTarget();
+            } catch (IOException e) {
+                // disconnected
+                break;
+            }
+        }
 	}
+
 	*/
 	
  
