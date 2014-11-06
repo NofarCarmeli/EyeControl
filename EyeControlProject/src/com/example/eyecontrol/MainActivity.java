@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.view.GestureDetectorCompat;
 import android.text.method.ScrollingMovementMethod;
@@ -27,6 +28,7 @@ public class MainActivity extends Activity  {
 	// objects with responsibilities
 	private static PropertiesRetriever properties;
 	private GestureDetectorCompat gesture_detector;
+	private BluetoothService bluetooth_service;
 	private static TextEditor text_editor;
 	private static GestureTranslator translator;
 	private static AudioController audio;
@@ -50,6 +52,8 @@ public class MainActivity extends Activity  {
 		if (!bluetooth_adapter.isEnabled()) {
 		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 		    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+		} else {
+			bluetooth_service = new BluetoothService(getBaseContext(), mHandler);
 		}
 		// initialize TTS
 		Intent checkTTSIntent = new Intent();
@@ -67,6 +71,15 @@ public class MainActivity extends Activity  {
 		lang = properties.get("first_language").charAt(0);
 	}
 	
+	// The Handler that gets information back from the BluetoothChatService
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            char gesture = (char) msg.what;
+            onGestureReceived(gesture);
+        }
+    };
+	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// initialize TTS
 		if (requestCode == MY_DATA_CHECK_CODE) {
@@ -78,12 +91,12 @@ public class MainActivity extends Activity  {
 				Toast.makeText(getApplicationContext(),"Please turn Bluetooth on.\nThis app does not work without Bluetooth." 
 				         ,Toast.LENGTH_LONG).show();
 			} else {
-				startBluetoothConnection();
+				bluetooth_service = new BluetoothService(getBaseContext(), mHandler);
 			}
 		}
 	}
 	
-	// gesture identification initialization
+	// on screen gesture identification initialization
 	@Override 
 	public boolean onTouchEvent(MotionEvent event){ 
 		this.gesture_detector.onTouchEvent(event);
@@ -180,117 +193,5 @@ public class MainActivity extends Activity  {
 			break;
 		}
 	}
-	
-	
-	// Bluetooth functions
-	
-	private void startBluetoothConnection() {/*
-		// find the device
-		BluetoothDevice mDevice = null;
-		Set<BluetoothDevice> pairedDevices = bluetooth_adapter.getBondedDevices();
-		for(BluetoothDevice bt : pairedDevices) {
-	         if (bt.getName().equals("Eye Control")) {
-	        	 mDevice = bt;
-	         }
-		}
-		if (mDevice == null) {
-			Toast.makeText(getApplicationContext(),"No Eye Control device found" 
-			         ,Toast.LENGTH_LONG).show();
-			// turn off?
-			return;
-		}
-		// connect
-		ConnectThread mConnectThread = new ConnectThread(mDevice);
-		mConnectThread.start();*/
-	}
-	
-/*
-	private class ConnectThread extends Thread {
-	    private final BluetoothSocket mmSocket;
-	    private final BluetoothDevice mmDevice;
-	    
-	    private final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
-	 
-	    public ConnectThread(BluetoothDevice device) {
-	        // Use a temporary object that is later assigned to mmSocket,
-	        // because mmSocket is final
-	        BluetoothSocket tmp = null;
-	        mmDevice = device;
-	 
-	        // Get a BluetoothSocket to connect with the given BluetoothDevice
-	        try {
-	            // MY_UUID is the app's UUID string, also used by the server code
-	            tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-	        } catch (IOException e) { }
-	        mmSocket = tmp;
-	    }
-	 
-	    public void run() {
-	        // Cancel discovery because it will slow down the connection
-	    	bluetooth_adapter.cancelDiscovery();
-	 
-	        try {
-	            // Connect the device through the socket. This will block
-	            // until it succeeds or throws an exception
-	            mmSocket.connect();
-	        } catch (IOException connectException) {
-	            // Unable to connect; close the socket and get out
-	            try {
-	                mmSocket.close();
-	            } catch (IOException closeException) { }
-	            return;
-	        }
-	 
-	        // Do work to manage the connection (in a separate thread)
-	        manageConnectedSocket(mmSocket);
-	    }
-	 
-	    // Will cancel an in-progress connection, and close the socket 
-	    public void cancel() {
-	        try {
-	            mmSocket.close();
-	        } catch (IOException e) { }
-	    }
-	}
-	
-	
-	private void manageConnectedSocket(BluetoothSocket mmSocket) {
-		InputStream tmpIn = null;
-		 
-        // Get the input and output streams, using temp objects because
-        // member streams are final
-        try {
-            tmpIn = mmSocket.getInputStream();
-        } catch (IOException e) { }
- 
-        InputStream mmInStream = tmpIn;
-        
-        // run
-        
-        int gesture = 0; // bytes returned from read()
- 
-        Handler mHandler;
-		// Keep listening to the InputStream until an exception occurs
-        while (true) {
-            try {
-                // Read from the InputStream
-                gesture = mmInStream.read();
-                if (gesture == -1) {
-                	// the end of the stream has been reached
-                	break;
-                }
-
-                // Send the obtained bytes to the UI Activity
-                mHandler.obtainMessage(BluetoothChat.MESSAGE_READ, bytes, -1, buffer)
-                        .sendToTarget();
-            } catch (IOException e) {
-                // disconnected
-                break;
-            }
-        }
-	}
-
-	*/
-	
  
 }
