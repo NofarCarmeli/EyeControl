@@ -3,7 +3,7 @@ package com.example.eyecontrol;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,22 +34,29 @@ public class BluetoothService {
 		BluetoothDevice mDevice = null;
 		Set<BluetoothDevice> pairedDevices = mAdapter.getBondedDevices();
 		for(BluetoothDevice bt : pairedDevices) {
-			if (bt.getName().equals("ELI-BOOK-L-0")) { //TODO change name
-				//if (bt.getName().equals("Msbeny")) { //TODO change name
+			Log.d("Testing", bt.getName());
+			if (bt.getName().equals("xubu1")) { //TODO change name
+				Log.d("Testing","Found you!!!");
 				mDevice = bt;
+				break;
 			}
 		}
+		/*Log.d("Testing", "found the device, continuing");
 		if (mDevice == null) {
 			Toast.makeText(context,"No Eye Control device found" 
 					,Toast.LENGTH_LONG).show();
 			// turn off?
 			return;
-		}
+		}*/
 		// connect
-		//Toast.makeText(mContext,"Debug: device found",Toast.LENGTH_LONG).show();
-		ConnectThread mConnectThread = new ConnectThread(mDevice);
+		//Log.d("Testing", "creating toast");
+		//Toast.makeText(mContext,"Debug: device found" + mDevice.getName(),Toast.LENGTH_LONG).show();
+		//Log.d("Testing", "done creating toast");
+		ConnectThread mConnectThread = new ConnectThread(mDevice, handler);
+		//Log.d("Testing", "Done creating thread");
 		//Toast.makeText(mContext,"still here 1",Toast.LENGTH_LONG).show();
 		mConnectThread.start();
+		//Log.d("Testing", "done start");
 		//Toast.makeText(mContext,"still here 3",Toast.LENGTH_LONG).show();
 	}
 
@@ -57,64 +64,40 @@ public class BluetoothService {
 	private class ConnectThread extends Thread {
 		private BluetoothSocket mmSocket;
 		private final BluetoothDevice mmDevice;
+		private Handler mHandler;
+		private final UUID MY_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111");
+		//private final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
 
-		private final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
-
-		public ConnectThread(BluetoothDevice device) {
+		public ConnectThread(BluetoothDevice device, Handler handler) {
 			Log.d(TAG, "ConnectThread creat start");
 			// Use a temporary object that is later assigned to mmSocket,
 			// because mmSocket is final
-			BluetoothSocket tmp = null;
+			//BluetoothSocket tmp = null;
 			mmDevice = device;
-
-			// Get a BluetoothSocket to connect with the given BluetoothDevice
-			try {
-				// MY_UUID is the app's UUID string, also used by the server code
-				Method m = mmDevice.getClass().getMethod("createRfcommSocket", new Class[] { int.class });
-				tmp = (BluetoothSocket) m.invoke(device, Integer.valueOf(1)); // 1==RFCOMM channel code 
-				
-				//tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-			} catch (Exception e) {	Log.d(TAG, "ConnectThread IOException"); }
-			mmSocket = tmp;
-			Log.d(TAG, "ConnectThread creat end");
+			mHandler = handler;
 		}
 
 		public void run() {
 			Log.d(TAG, "run ConnectThread start");
 
 			// Cancel discovery because it will slow down the connection
-			mAdapter.cancelDiscovery();
-
 			try {
-				// Connect the device through the socket. This will block
-				// until it succeeds or throws an exception
-				Log.d(TAG, "run ConnectThread connect");
-				mmSocket.connect();
-				Log.d(TAG, "run ConnectThread connected");
-			} catch (IOException connectException) {
-				// Unable to connect; close the socket and get out
-				Log.e(TAG, "run ConnectThread ERROR");
-				try {
-					Log.d(TAG,"trying fallback...");
 
-					mmSocket =(BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
-					mmSocket.connect();
+				mmSocket = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
 
-					Log.d(TAG,"Connected");
-				}
-				catch (Exception closeException) { 
-					try {
-						Log.e(TAG,"no...");
-						mmSocket.close();
-					}
-					catch (IOException exception) { }
-				} 
-				return;
-			}
+	        } catch (IOException e) {
+	            Log.e(TAG, "create() failed", e);
+	        }
+			mAdapter.cancelDiscovery();
+			 try {
 
-			// Do work to manage the connection (in a separate thread)
-			//  Toast.makeText(mContext,"Debug: connection made",Toast.LENGTH_LONG).show();
-			manageConnectedSocket(mmSocket);
+		            /* This is a blocking call and will only return on a
+		               successful connection or an exception*/
+				 mmSocket.connect();
+		        } catch (IOException e) {
+		        	Log.e(TAG, "connect() failed", e);
+		        }
+			manageConnectedSocket(mmSocket, mHandler);
 		}
 
 		// Will cancel an in-progress connection, and close the socket 
@@ -126,7 +109,7 @@ public class BluetoothService {
 	}
 
 
-	private void manageConnectedSocket(BluetoothSocket mmSocket) {
+	private void manageConnectedSocket(BluetoothSocket mmSocket, Handler handler) {
 		Log.d(TAG, "manageConnectedSocket start");
 		InputStream tmpIn = null;
 		OutputStream tmpOut = null;
@@ -163,10 +146,15 @@ public class BluetoothService {
 					Log.e(TAG, "manageConnectedSocket end?");
 					break;
 				}
-				Log.e(TAG, "got: "+ (char)gesture);
+				Log.e(TAG, "got: "+ (int)gesture);
 				// Send the obtained byte to the UI Activity
-				mHandler.obtainMessage(gesture).sendToTarget();
+				//mHandler.obta  inMessage(gesture).sendToTarget();
+				if((char) gesture=='L' ||(char)gesture=='R' ||(char)gesture=='U' ||(char)gesture=='D' ||(char)gesture=='B' ){ 
+					Log.d("MAJD", "Sending: " + gesture);
+					mHandler.obtainMessage(gesture).sendToTarget();
+				}
 				//Toast.makeText(mContext,"Debug: "+(char)gesture+" recieved",Toast.LENGTH_LONG).show();
+				//handler.obtainMessage(gesture).sendToTarget();
 			} catch (IOException e) {
 				//Toast.makeText(mContext,"Debug: gesture IOException",Toast.LENGTH_LONG).show();
 				// disconnected
@@ -180,3 +168,4 @@ public class BluetoothService {
 
 
 }
+
