@@ -38,6 +38,8 @@ public class MainActivity extends Activity  {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		// get properties
+		properties = new PropertiesRetriever(getBaseContext());
 		// initialize view
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
@@ -53,15 +55,14 @@ public class MainActivity extends Activity  {
 		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 		    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		} else {
-			bluetooth_service = new BluetoothService(getBaseContext(), mHandler);
+			bluetooth_service = new BluetoothService(getBaseContext(), mHandler, properties);
 		}
 		// initialize TTS
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 		// initialize objects
-		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());
-		properties = new PropertiesRetriever(getBaseContext());
+		((TextView)findViewById (R.id.cumulated_text)).setMovementMethod(ScrollingMovementMethod.getInstance());		
 		gesture_detector = new GestureDetectorCompat(this, new GestureListener(this));
 		text_editor = new TextEditor((TextView)findViewById (R.id.cumulated_text));
 		display = new DisplayManipulator(getBaseContext(), properties, findViewById(android.R.id.content));
@@ -91,7 +92,7 @@ public class MainActivity extends Activity  {
 				Toast.makeText(getApplicationContext(),"Please turn Bluetooth on.\nThis app does not work without Bluetooth." 
 				         ,Toast.LENGTH_LONG).show();
 			} else {
-				bluetooth_service = new BluetoothService(getBaseContext(), mHandler);
+				bluetooth_service = new BluetoothService(getBaseContext(), mHandler, properties);
 			}
 		}
 	}
