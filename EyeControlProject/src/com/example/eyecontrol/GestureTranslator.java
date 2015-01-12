@@ -32,8 +32,8 @@ public class GestureTranslator {
 	    
 		// clear previous gestures if too long has passed
 		long cur_time = System.nanoTime();
-		long allowed_time_difference = 1000000*Integer.valueOf(properties.get("time_between_gestures"));
-		if (cur_time-last_time>allowed_time_difference) {
+		long allowed_time_difference = 1000*Integer.valueOf(properties.get("time_between_gestures"));
+		if ((cur_time-last_time)/1000>allowed_time_difference) {
 			clearGestures();
 		}
 		last_time = cur_time;
